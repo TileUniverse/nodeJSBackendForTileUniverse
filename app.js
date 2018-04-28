@@ -1,12 +1,14 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+const bluzelle = require('bluzelle');
 
-var app = express();
+const indexRouter = require('./routes/index');
+
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -31,5 +33,41 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const UUID = process.env.UUID;
+
+initUniverse(10, 10);
+
+function initUniverse(width, height){
+    bluzelle.connect(process.env.SWARM_IP, UUID);
+
+    const globalState = {
+
+    };
+
+    bluzelle.create("global", globalState).then(() => {
+            console.log('globalState has been created');
+        },
+        error => {
+            console.log(error);
+        });
+
+    const baseTile = {
+      "units": [],
+      "weather": false
+    };
+
+    for(let x = 0; x < width; x++) {
+        for(let y = 0; y < height; y++) {
+            bluzelle.connect(process.env.SWARM_IP, UUID);
+            bluzelle.create(x + "," + y, baseTile).then(() => {
+                    console.log('tile ' + x + "," + y +' has been created');
+                },
+                error => {
+                    console.log(error);
+            });
+        }
+    }
+}
 
 module.exports = app;

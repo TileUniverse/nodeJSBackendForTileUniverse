@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const bluzelle = require('bluzelle');
 
+const UUID = process.env.UUID;
+
 router.get('/', function(req, res, next) {
-    const UUID = "someUUID";
-    const someString = "someString";
+    const x = req.query.x;
+    const y = req.query.y;
     bluzelle.connect(process.env.SWARM_IP, UUID);
 
-    bluzelle.read('key').then((value) => {
-        console.log("value:" + value);
+    bluzelle.read(x + "," + y).then((value) => {
+        console.log(x + "," + y + ":" + value);
         res.json(value);
     },
     error => {
@@ -18,12 +20,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function (req, res) {
-    const UUID = "someUUID";
-    const someString = "someString";
+    const x = req.body.x;
+    const y = req.body.y;
+    const data = req.body.data;
+
     bluzelle.connect(process.env.SWARM_IP, UUID);
 
-    bluzelle.create('key', someString).then(() => {
-        console.log('key has been created');
+    bluzelle.update(x + "," + y, data).then(() => {
+        console.log(x + "," + y + " updated to: " + data);
     },
     error => {
         console.log(error);
