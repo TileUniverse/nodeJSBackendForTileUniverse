@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
     const y = req.query.y;
 
     if(x) {
+        console.log(x);
         bluzelle.connect(process.env.SWARM_IP, UUID);
 
         bluzelle.read(x + "," + y).then((value) => {
@@ -21,29 +22,25 @@ router.get('/', function(req, res, next) {
                 }
             );
     } else {
-        bluzelle.connect(process.env.SWARM_IP, UUID);
-        bluzelle.read("global").then((size) => getAllTiles(size)).then((allTiles) => sendAllTiles(allTiles, res)); //this obviously doesn't work
+        console.log("global request");
+        bluzelle.read("global").then((size) => {
+            console.log(size);
+            getAllTiles(size, res)
+        });
     }
 });
 
 function getAllTiles(size, res){
-    let allTiles;
-    for(let x = 0; x < size.x; x++){
-        for(let y = 0; y < size.y; y++){
-            bluzelle.connect(process.env.SWARM_IP, UUID);
-
-            bluzelle.read(x + "," + y).then((value) => {
-                    console.log(x + "," + y + ":" + value);
-                    // res.json(value);
-                    allTiles.add(value);
-                },
-                error => {
-                    console.log(error);
-                    res.json(error);
-                }
-            );
+    console.log("get all tiles");
+    let arrayOfKeys = [];
+    for(let x = 0; x < size.width; x++){
+        for(let y = 0; y < size.height; y++){
+            arrayOfKeys.push(x + "," + y);
         }
     }
+    console.log(arrayOfKeys);
+    const readMulti = keys => Promise.all(keys.map(bluzelle.read)).then((values) => res.json(values));
+    readMulti(arrayOfKeys);
 }
 
 function sendAllTiles(allTiles, res){
@@ -53,9 +50,9 @@ function sendAllTiles(allTiles, res){
 router.post('/', function (req, res) {
     const x = req.body.x;
     const y = req.body.y;
-    const tiles = req.body.tiles;
+    const tiles = JSON.parse(req.body.tiles);
     const data = req.body.data;
-    console.log(req);
+    console.log(req.body);
 
     if(x) {
         bluzelle.connect(process.env.SWARM_IP, UUID);
