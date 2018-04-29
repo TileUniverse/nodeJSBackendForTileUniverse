@@ -2,7 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
+const bluzelle = require('bluzelle');
+
+const UUID = process.env.UUID;
+
 let tiles = [];
+
+let now = 0;
 
 initUniverseInMemory(10, 10);
 
@@ -49,6 +55,28 @@ router.post('/', function (req, res) {
         })
     });
     res.json(tiles);
+
+    now = new Date().getTime();
+
+    bluzelle.connect(process.env.SWARM_IP, UUID);
+    bluzelle.create(now, tiles[0]).then(() => {
+        console.log("create success");
+        readFromBackup(now);
+    },
+    error => {
+        console.log(error);
+    })
 });
+
+function readFromBackup(timeStamp){
+    bluzelle.connect(process.env.SWARM_IP, UUID);
+    bluzelle.read(timeStamp).then((value) => {
+        console.log("read success");
+        },
+        error => {
+            console.log(error);
+        }
+    );
+}
 
 module.exports = router;

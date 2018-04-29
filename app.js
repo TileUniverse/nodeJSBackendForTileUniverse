@@ -56,8 +56,6 @@ function initUniverse(width, height){
             console.log(error);
         });
 
-    console.log(myEvent);
-
     const baseTile = {
         "units": [],
         "weather": false
