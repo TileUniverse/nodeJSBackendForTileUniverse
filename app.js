@@ -39,25 +39,7 @@ app.use(function(err, req, res, next) {
 
 const UUID = process.env.UUID;
 
-initUniverse(10, 10);
-
-function Tile(){
-
-}
-
-Tile.prototype.consumeEvents = function () {
-    for(event in this.events){
-        event.consume();
-    }
-};
-
-Event.prototype.consume = function () {
-
-};
-
-function Event(){
-
-}
+// initUniverse(10, 10);
 
 function initUniverse(width, height){
     bluzelle.connect(process.env.SWARM_IP, UUID);
@@ -73,11 +55,6 @@ function initUniverse(width, height){
         error => {
             console.log(error);
         });
-
-    let myEvent = new Event();
-    myEvent.logSomething = function () {
-        console.log("consuming");
-    };
 
     console.log(myEvent);
 
