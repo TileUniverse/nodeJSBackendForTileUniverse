@@ -42,7 +42,8 @@ function initUniverse(width, height){
     bluzelle.connect(process.env.SWARM_IP, UUID);
 
     const globalState = {
-
+        "height": height,
+        "width": width
     };
 
     bluzelle.create("global", globalState).then(() => {

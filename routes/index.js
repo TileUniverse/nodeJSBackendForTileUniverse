@@ -7,23 +7,55 @@ const UUID = process.env.UUID;
 router.get('/', function(req, res, next) {
     const x = req.query.x;
     const y = req.query.y;
-    bluzelle.connect(process.env.SWARM_IP, UUID);
 
-    bluzelle.read(x + "," + y).then((value) => {
-        console.log(x + "," + y + ":" + value);
-        res.json(value);
-    },
-    error => {
-        console.log(error);
-        res.json(error);
-    });
+    if(x) {
+        bluzelle.connect(process.env.SWARM_IP, UUID);
+
+        bluzelle.read(x + "," + y).then((value) => {
+                console.log(x + "," + y + ":" + value);
+                res.json(value);
+            },
+            error => {
+                console.log(error);
+                res.json(error);
+                }
+            );
+    } else {
+        bluzelle.connect(process.env.SWARM_IP, UUID);
+        bluzelle.read("global").then((size) => getAllTiles(size)).then((allTiles) => sendAllTiles(allTiles, res)); //this obviously doesn't work
+    }
 });
+
+function getAllTiles(size, res){
+    let allTiles;
+    for(let x = 0; x < size.x; x++){
+        for(let y = 0; y < size.y; y++){
+            bluzelle.connect(process.env.SWARM_IP, UUID);
+
+            bluzelle.read(x + "," + y).then((value) => {
+                    console.log(x + "," + y + ":" + value);
+                    // res.json(value);
+                    allTiles.add(value);
+                },
+                error => {
+                    console.log(error);
+                    res.json(error);
+                }
+            );
+        }
+    }
+}
+
+function sendAllTiles(allTiles, res){
+    res.json(allTiles);
+}
 
 router.post('/', function (req, res) {
     const x = req.body.x;
     const y = req.body.y;
     const tiles = req.body.tiles;
     const data = req.body.data;
+    console.log(req);
 
     if(x) {
         bluzelle.connect(process.env.SWARM_IP, UUID);
