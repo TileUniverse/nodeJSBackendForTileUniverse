@@ -40,7 +40,10 @@ function getAllTiles(size, res){
         }
     }
     console.log(arrayOfKeys);
-    const readMulti = keys => Promise.all(keys.map(bluzelle.read)).then((values) => res.json(values));
+    const readMulti = keys => Promise.all(keys.map(bluzelle.read)).then((values) => {
+        console.log(values);
+        res.json(values);
+    });
     readMulti(arrayOfKeys);
 }
 

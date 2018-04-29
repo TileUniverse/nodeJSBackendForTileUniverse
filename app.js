@@ -64,6 +64,8 @@ function initUniverse(width, height){
     for(let x = 0; x < width; x++) {
         for(let y = 0; y < height; y++) {
             bluzelle.connect(process.env.SWARM_IP, UUID);
+            baseTile.x = x;
+            baseTile.y = y;
             bluzelle.create(x + "," + y, baseTile).then(() => {
                     console.log('tile ' + x + "," + y +' has been created');
                 },
