@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const bluzelle = require('bluzelle');
 
@@ -43,35 +44,52 @@ function getAllTiles(size, res){
     readMulti(arrayOfKeys);
 }
 
-function sendAllTiles(allTiles, res){
-    res.json(allTiles);
-}
-
 router.post('/', function (req, res) {
+    console.log("body=");
+    console.log(req.body);
+    console.log(req);
     const x = req.body.x;
     const y = req.body.y;
-    const tiles = JSON.parse(req.body.tiles);
-    const data = req.body.data;
+    let tiles;
+    if(req.body.tiles) {
+        tiles = JSON.parse(req.body.tiles);
+    }
+    let data = req.body.data;
+    if(data){
+        data = data.toString();
+    } else {
+        data = "";
+    }
     console.log(req.body);
 
     if(x) {
         bluzelle.connect(process.env.SWARM_IP, UUID);
 
-        bluzelle.update(x + "," + y, data).then(() => {
+        const key = x.toString() + "," + y.toString();
+        console.log(key);
+
+        bluzelle.update(key, data).then(() => {
                 console.log(x + "," + y + " updated to: " + data);
+                res.json(data);
             },
             error => {
                 console.log(error);
+                res.json(error);
             });
     } else {
         for(const tile in tiles){
             bluzelle.connect(process.env.SWARM_IP, UUID);
 
-            bluzelle.update(tile.x + "," + tile.y, tile.data).then(() => {
+            const key = tile.x + "," + tile.y;
+            console.log(key);
+
+            bluzelle.update(key, tile.data).then(() => {
                     console.log(tile.x + "," + tile.y + " updated to: " + tile.data);
+                    res.json(tile);
                 },
                 error => {
                     console.log(error);
+                    res.json(error);
                 });
         }
     }
