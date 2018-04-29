@@ -22,16 +22,30 @@ router.get('/', function(req, res, next) {
 router.post('/', function (req, res) {
     const x = req.body.x;
     const y = req.body.y;
+    const tiles = req.body.tiles;
     const data = req.body.data;
 
-    bluzelle.connect(process.env.SWARM_IP, UUID);
+    if(x) {
+        bluzelle.connect(process.env.SWARM_IP, UUID);
 
-    bluzelle.update(x + "," + y, data).then(() => {
-        console.log(x + "," + y + " updated to: " + data);
-    },
-    error => {
-        console.log(error);
-    });
+        bluzelle.update(x + "," + y, data).then(() => {
+                console.log(x + "," + y + " updated to: " + data);
+            },
+            error => {
+                console.log(error);
+            });
+    } else {
+        for(const tile in tiles){
+            bluzelle.connect(process.env.SWARM_IP, UUID);
+
+            bluzelle.update(tile.x + "," + tile.y, tile.data).then(() => {
+                    console.log(tile.x + "," + tile.y + " updated to: " + tile.data);
+                },
+                error => {
+                    console.log(error);
+                });
+        }
+    }
 });
 
 module.exports = router;
