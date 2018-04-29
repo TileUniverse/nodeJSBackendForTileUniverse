@@ -41,6 +41,24 @@ const UUID = process.env.UUID;
 
 initUniverse(10, 10);
 
+function Tile(){
+
+}
+
+Tile.prototype.consumeEvents = function () {
+    for(event in this.events){
+        event.consume();
+    }
+};
+
+Event.prototype.consume = function () {
+
+};
+
+function Event(){
+
+}
+
 function initUniverse(width, height){
     bluzelle.connect(process.env.SWARM_IP, UUID);
 
@@ -49,16 +67,23 @@ function initUniverse(width, height){
         "width": width
     };
 
-    bluzelle.create("global", globalState).then(() => {
+    bluzelle.update("global", globalState).then(() => {
             console.log('globalState has been created');
         },
         error => {
             console.log(error);
         });
 
+    let myEvent = new Event();
+    myEvent.logSomething = function () {
+        console.log("consuming");
+    };
+
+    console.log(myEvent);
+
     const baseTile = {
-      "units": [],
-      "weather": false
+        "units": [],
+        "weather": false
     };
 
     for(let x = 0; x < width; x++) {
@@ -66,8 +91,8 @@ function initUniverse(width, height){
             bluzelle.connect(process.env.SWARM_IP, UUID);
             baseTile.x = x;
             baseTile.y = y;
-            bluzelle.create(x + "," + y, baseTile).then(() => {
-                    console.log('tile ' + x + "," + y +' has been created');
+            bluzelle.update(x + "," + y, baseTile).then(() => {
+                    console.log('tile ' + x + "," + y +' has been updated to' + JSON.stringify(baseTile));
                 },
                 error => {
                     console.log(error);

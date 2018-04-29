@@ -51,9 +51,11 @@ function getAllTiles(size, res){
 }
 
 router.post('/', function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     console.log("body=");
     console.log(req.body);
-    console.log(req);
     const x = req.body.x;
     const y = req.body.y;
     let tiles;
@@ -66,7 +68,6 @@ router.post('/', function (req, res) {
     } else {
         data = "";
     }
-    console.log(req.body);
 
     if(x) {
         bluzelle.connect(process.env.SWARM_IP, UUID);
@@ -75,30 +76,33 @@ router.post('/', function (req, res) {
         console.log(key);
 
         bluzelle.update(key, data).then(() => {
-                console.log(x + "," + y + " updated to: " + data);
-                res.json(data);
+                console.log(x + "," + y + " individually updated to: " + data);
             },
             error => {
                 console.log(error);
-                res.json(error);
             });
     } else {
-        for(const tile in tiles){
+        for(let i = 0; i < tiles.length; i++){
             bluzelle.connect(process.env.SWARM_IP, UUID);
 
-            const key = tile.x + "," + tile.y;
+            const key = tiles[i].x + "," + tiles[i].y;
+            console.log("key=");
             console.log(key);
+            console.log("tiles[" + i + "]");
+            console.log(tiles[i]);
+            console.log("JSON.stringify(tiles[i])");
+            console.log(tiles[i]);
 
-            bluzelle.update(key, tile.data).then(() => {
-                    console.log(tile.x + "," + tile.y + " updated to: " + tile.data);
-                    res.json(tile);
+            bluzelle.update(key, tiles[i]).then(() => {
+                    console.log(key + " bulk updated to: " + JSON.stringify(tiles[i]));
                 },
                 error => {
                     console.log(error);
-                    res.json(error);
+                    console.log(key + " bulk updated FAILED: " + JSON.stringify(tiles[i]));
                 });
         }
     }
+    res.json(tiles);
 });
 
 module.exports = router;
