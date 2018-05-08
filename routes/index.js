@@ -50,6 +50,8 @@ router.post('/', function (req, res) {
         tiles = tiles.map(function(realTile){
             if(realTile.x === tile.x && realTile.y === tile.y){
                 realTile[field] = tile[field];
+                console.log(realTile[field]);
+                console.log(realTile);
             }
             return realTile;
         })
@@ -58,14 +60,14 @@ router.post('/', function (req, res) {
 
     now = new Date().getTime();
 
-    bluzelle.connect(process.env.SWARM_IP, UUID);
-    bluzelle.create(now, tiles[0]).then(() => {
-        console.log("create success");
-        readFromBackup(now);
-    },
-    error => {
-        console.log(error);
-    })
+    // bluzelle.connect(process.env.SWARM_IP, UUID);
+    // bluzelle.create(now, tiles[0]).then(() => {
+    //     console.log("create success");
+    //     readFromBackup(now);
+    // },
+    // error => {
+    //     // console.log(error);
+    // })
 });
 
 function readFromBackup(timeStamp){
@@ -74,7 +76,7 @@ function readFromBackup(timeStamp){
         console.log("read success");
         },
         error => {
-            console.log(error);
+            // console.log(error);
         }
     );
 }

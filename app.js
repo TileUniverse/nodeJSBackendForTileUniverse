@@ -49,31 +49,31 @@ function initUniverse(width, height){
         "width": width
     };
 
-    bluzelle.update("global", globalState).then(() => {
-            console.log('globalState has been created');
-        },
-        error => {
-            console.log(error);
-        });
+    // bluzelle.update("global", globalState).then(() => {
+    //         console.log('globalState has been created');
+    //     },
+    //     error => {
+    //         console.log(error);
+    //     });
 
     const baseTile = {
         "units": [],
         "weather": false
     };
 
-    for(let x = 0; x < width; x++) {
-        for(let y = 0; y < height; y++) {
-            bluzelle.connect(process.env.SWARM_IP, UUID);
-            baseTile.x = x;
-            baseTile.y = y;
-            bluzelle.update(x + "," + y, baseTile).then(() => {
-                    console.log('tile ' + x + "," + y +' has been updated to' + JSON.stringify(baseTile));
-                },
-                error => {
-                    console.log(error);
-            });
-        }
-    }
+    // for(let x = 0; x < width; x++) {
+    //     for(let y = 0; y < height; y++) {
+    //         bluzelle.connect(process.env.SWARM_IP, UUID);
+    //         baseTile.x = x;
+    //         baseTile.y = y;
+    //         bluzelle.update(x + "," + y, baseTile).then(() => {
+    //                 console.log('tile ' + x + "," + y +' has been updated to' + JSON.stringify(baseTile));
+    //             },
+    //             error => {
+    //                 console.log(error);
+    //         });
+    //     }
+    // }
 }
 
 module.exports = app;
